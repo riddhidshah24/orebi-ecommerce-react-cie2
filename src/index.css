@@ -1,34 +1,72 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer components {
-  .hoverEffect {
-    @apply duration-300 cursor-pointer;
-  }
-  .headerSedenavLi {
-    @apply hover:underline underline-offset-2 cursor-pointer text-gray-300 hover:text-white;
+@theme {
+  --font-bodyFont: "DM Sans", sans-serif;
+  --font-titleFont: "Poppins", sans-serif;
+
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 375px;
+  --breakpoint-sml: 500px;
+  --breakpoint-md: 667px;
+  --breakpoint-mdl: 768px;
+  --breakpoint-lg: 960px;
+  --breakpoint-lgl: 1024px;
+  --breakpoint-xl: 1280px;
+
+  --width-container: 1440px;
+  --max-width-container: 1440px;
+
+  --shadow-testShadow: 0px 0px 54px -13px rgba(0, 0, 0, 0.7);
+
+  /* Centralized Semantic Color Tokens */
+  --color-primary: #262626;
+  --color-secondary: #767676;
+  --color-accent: #1e88e5;
+  --color-background: #ffffff;
+  --color-foreground: #262626;
+  --color-muted: #6d6d6d;
+  --color-border: #f0f0f0;
+  --color-destructive: #ea2b0f;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* Legacy color aliases mapped to semantic tokens */
+  --color-primeColor: var(--color-primary);
+  --color-lightText: var(--color-muted);
+}
+
+@utility hoverEffect {
+  transition-duration: 300ms;
+  cursor: pointer;
+}
+
+@utility headerSedenavLi {
+  cursor: pointer;
+  color: #d1d5db;
+  text-underline-offset: 2px;
+  &:hover {
+    text-decoration-line: underline;
+    color: #ffffff;
   }
 }
 
 /* ============= NavLink active Start here ============== */
 nav .active li {
-  color: black;
+  color: var(--color-primary);
   font-weight: 600;
-  text-decoration: 1px underline black;
+  text-decoration: 1px underline var(--color-primary);
 }
 
 @media screen and (max-width: 665px) {
   nav .active li {
-    color: white;
+    color: #ffffff;
     font-weight: 600;
-    text-decoration: 1px underline white;
+    text-decoration: 1px underline #ffffff;
   }
 }
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-/* ============= NavLink active End here ================ */

@@ -38,8 +38,8 @@ const Banner = () => {
           i === dotActive
             ? {
                 width: "30px",
-                color: "#262626",
-                borderRight: "3px #262626 solid",
+                color: "var(--color-primary)",
+                borderRight: "3px var(--color-primary) solid",
                 padding: "8px 0",
                 cursor: "pointer",
               }
@@ -78,8 +78,8 @@ const Banner = () => {
                 i === dotActive
                   ? {
                       width: "25px",
-                      color: "#262626",
-                      borderRight: "3px #262626 solid",
+                      color: "var(--color-primary)",
+                      borderRight: "3px var(--color-primary) solid",
                       cursor: "pointer",
                       fontSize: "12px",
                     }

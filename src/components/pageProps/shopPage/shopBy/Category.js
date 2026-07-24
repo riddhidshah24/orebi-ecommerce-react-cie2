@@ -33,11 +33,11 @@ const Category = () => {
     <div className="w-full">
       <NavTitle title="Shop by Category" icons={false} />
       <div>
-        <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">
+        <ul className="flex flex-col gap-4 text-sm lg:text-base text-secondary">
           {items.map(({ _id, title, icons }) => (
             <li
               key={_id}
-              className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center justify-between"
+              className="border-b-[1px] border-b-border pb-2 flex items-center justify-between"
             >
               {title}
               {icons && (
