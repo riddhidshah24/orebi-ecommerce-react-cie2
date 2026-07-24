@@ -2,6 +2,11 @@
   "name": "orebishop",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.2",
     "@testing-library/jest-dom": "^5.16.5",
@@ -22,6 +27,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
