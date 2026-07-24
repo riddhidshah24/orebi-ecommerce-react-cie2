@@ -6,6 +6,8 @@ import NewArrivals from "../../components/home/NewArrivals/NewArrivals";
 import Sale from "../../components/home/Sale/Sale";
 import SpecialOffers from "../../components/home/SpecialOffers/SpecialOffers";
 import YearProduct from "../../components/home/YearProduct/YearProduct";
+import FlashSale from "../../components/home/FlashSale/FlashSale";
+import Testimonials from "../../components/home/Testimonials/Testimonials";
 
 const Home = () => {
   return (
@@ -15,9 +17,11 @@ const Home = () => {
       <div className="max-w-container mx-auto px-4">
         <Sale />
         <NewArrivals />
+        <FlashSale />
         <BestSellers />
         <YearProduct />
         <SpecialOffers />
+        <Testimonials />
       </div>
     </div>
   );

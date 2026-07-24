@@ -1,95 +1,100 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BsGridFill } from "react-icons/bs";
 import { ImList } from "react-icons/im";
 import { GoTriangleDown } from "react-icons/go";
 
-const ProductBanner = ({ itemsPerPageFromBanner }) => {
-  //   const [selected, setSelected] = useState("");
-  const [girdViewActive, setGridViewActive] = useState(true);
-  const [listViewActive, setListViewActive] = useState(false);
-  useEffect(() => {
-    const gridView = document.querySelector(".gridView");
-    const listView = document.querySelector(".listView");
-
-    gridView.addEventListener("click", () => {
-      setListViewActive(false);
-      setGridViewActive(true);
-    });
-    listView.addEventListener("click", () => {
-      setGridViewActive(false);
-      setListViewActive(true);
-    });
-  }, [girdViewActive, listViewActive]);
-
+const ProductBanner = ({
+  isGridView,
+  setIsGridView,
+  itemsPerPage,
+  setItemsPerPage,
+  sortBy,
+  setSortBy,
+  totalProductsCount,
+}) => {
   return (
-    <div className="w-full flex flex-col md:flex-row md:items-center justify-between">
-      {/* =========================================================
-                            Left Part Start here
-        ======================================================== */}
+    <div className="w-full flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50 p-3 rounded-lg border border-gray-200">
+      {/* Grid / List View Toggle Controls */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 border border-gray-200 rounded-md p-1 bg-white">
+          <button
+            type="button"
+            onClick={() => setIsGridView(true)}
+            title="Grid View"
+            className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+              isGridView
+                ? "bg-primeColor text-white shadow-xs"
+                : "text-secondary hover:text-primeColor hover:bg-gray-100"
+            }`}
+          >
+            <BsGridFill className="text-base" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsGridView(false)}
+            title="List View"
+            className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+              !isGridView
+                ? "bg-primeColor text-white shadow-xs"
+                : "text-secondary hover:text-primeColor hover:bg-gray-100"
+            }`}
+          >
+            <ImList className="text-sm" />
+          </button>
+        </div>
+        <span className="text-sm text-secondary font-medium hidden sm:inline-block">
+          Showing {totalProductsCount} {totalProductsCount === 1 ? "Product" : "Products"}
+        </span>
+      </div>
 
-      <div className="flex items-center gap-4">
-        <span
-          className={`${
-            girdViewActive
-              ? "bg-primeColor text-white"
-              : "border-[1px] border-gray-300 text-secondary"
-          } w-8 h-8 text-lg flex items-center justify-center cursor-pointer gridView`}
-        >
-          <BsGridFill />
-        </span>
-        <span
-          className={`${
-            listViewActive
-              ? "bg-primeColor text-white"
-              : "border-[1px] border-gray-300 text-secondary"
-          } w-8 h-8 text-base flex items-center justify-center cursor-pointer listView`}
-        >
-          <ImList />
-        </span>
-      </div>
-      {/* =========================================================
-                            Left Part End here
-        ======================================================== */}
-      {/* =========================================================
-                            Right Part STart here
-        ======================================================== */}
-      <div className="flex items-center gap-2 md:gap-6 mt-4 md:mt-0">
-        <div className="flex items-center gap-2 text-base text-secondary relative">
-          <label className="block">Sort by:</label>
-          <select
-            // onChange={(e) => setSelected(e.target.value)}
-            id="countries"
-            className="w-32 md:w-52 border-[1px] border-gray-200 py-1 px-4 cursor-pointer text-primeColor text-base block dark:placeholder-gray-400 appearance-none focus-within:outline-none focus-visible:border-primeColor"
-          >
-            <option value="Best Sellers">Best Sellers</option>
-            <option value="New Arrival">New Arrival</option>
-            <option value="Featured">Featured</option>
-            <option value="Final Offer">Final Offer</option>
-          </select>
-          <span className="absolute text-sm right-2 md:right-4 top-2.5">
-            <GoTriangleDown />
-          </span>
+      {/* Sort By & Show Options */}
+      <div className="flex items-center gap-3 md:gap-6 flex-wrap sm:flex-nowrap">
+        <div className="flex items-center gap-2 text-sm text-secondary relative">
+          <label htmlFor="sortBy" className="block whitespace-nowrap font-medium">
+            Sort by:
+          </label>
+          <div className="relative">
+            <select
+              id="sortBy"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-36 md:w-44 border border-gray-200 bg-white py-1.5 pl-3 pr-8 rounded-md cursor-pointer text-primeColor text-sm font-medium appearance-none focus:outline-none focus:border-primeColor shadow-xs"
+            >
+              <option value="default">Featured</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+              <option value="rating">Top Rated</option>
+            </select>
+            <span className="absolute text-xs right-2.5 top-3 pointer-events-none text-gray-500">
+              <GoTriangleDown />
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-secondary relative">
-          <label className="block">Show:</label>
-          <select
-            onChange={(e) => itemsPerPageFromBanner(+e.target.value)}
-            id="countries"
-            className="w-16 md:w-20 border-[1px] border-gray-200 py-1 px-4 cursor-pointer text-primeColor text-base block dark:placeholder-gray-400 appearance-none focus-within:outline-none focus-visible:border-primeColor"
-          >
-            <option value="12">12</option>
-            <option value="24">24</option>
-            <option value="36">36</option>
-            <option value="48">48</option>
-          </select>
-          <span className="absolute text-sm right-3 top-2.5">
-            <GoTriangleDown />
-          </span>
+
+        <div className="flex items-center gap-2 text-sm text-secondary relative">
+          <label htmlFor="itemsPerPage" className="block whitespace-nowrap font-medium">
+            Show:
+          </label>
+          <div className="relative">
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              className="w-16 md:w-20 border border-gray-200 bg-white py-1.5 pl-3 pr-6 rounded-md cursor-pointer text-primeColor text-sm font-medium appearance-none focus:outline-none focus:border-primeColor shadow-xs"
+            >
+              <option value={6}>6</option>
+              <option value={12}>12</option>
+              <option value={24}>24</option>
+              <option value={36}>36</option>
+            </select>
+            <span className="absolute text-xs right-2 top-3 pointer-events-none text-gray-500">
+              <GoTriangleDown />
+            </span>
+          </div>
         </div>
       </div>
-      {/* =========================================================
-                            Right Part End here
-        ======================================================== */}
     </div>
   );
 };
