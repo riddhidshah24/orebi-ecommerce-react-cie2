@@ -1,411 +1,282 @@
 import React, { useState } from "react";
 import { BsCheckCircleFill } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
 import { logoLight } from "../../assets/images";
+import { useOrebiStore } from "../../store/useOrebiStore";
 
 const SignUp = () => {
-  // ============= Initial State Start here =============
   const [clientName, setClientName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
   const [zip, setZip] = useState("");
   const [checked, setChecked] = useState(false);
-  // ============= Initial State End here ===============
-  // ============= Error Msg Start here =================
+  const [showPassword, setShowPassword] = useState(false);
+
   const [errClientName, setErrClientName] = useState("");
   const [errEmail, setErrEmail] = useState("");
   const [errPhone, setErrPhone] = useState("");
   const [errPassword, setErrPassword] = useState("");
-  const [errAddress, setErrAddress] = useState("");
-  const [errCity, setErrCity] = useState("");
-  const [errCountry, setErrCountry] = useState("");
-  const [errZip, setErrZip] = useState("");
-  // ============= Error Msg End here ===================
+  const [errAgree, setErrAgree] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  // ============= Event Handler Start here =============
-  const handleName = (e) => {
-    setClientName(e.target.value);
-    setErrClientName("");
-  };
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-    setErrEmail("");
-  };
-  const handlePhone = (e) => {
-    setPhone(e.target.value);
-    setErrPhone("");
-  };
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-    setErrPassword("");
-  };
-  const handleAddress = (e) => {
-    setAddress(e.target.value);
-    setErrAddress("");
-  };
-  const handleCity = (e) => {
-    setCity(e.target.value);
-    setErrCity("");
-  };
-  const handleCountry = (e) => {
-    setCountry(e.target.value);
-    setErrCountry("");
-  };
-  const handleZip = (e) => {
-    setZip(e.target.value);
-    setErrZip("");
-  };
-  // ============= Event Handler End here ===============
-  // ================= Email Validation start here =============
-  const EmailValidation = (email) => {
-    return String(email)
-      .toLowerCase()
-      .match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
-  };
-  // ================= Email Validation End here ===============
+
+  const loginUserStore = useOrebiStore((state) => state.loginUser);
+  const navigate = useNavigate();
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    if (checked) {
-      if (!clientName) {
-        setErrClientName("Enter your name");
-      }
-      if (!email) {
-        setErrEmail("Enter your email");
-      } else {
-        if (!EmailValidation(email)) {
-          setErrEmail("Enter a Valid email");
-        }
-      }
-      if (!phone) {
-        setErrPhone("Enter your phone number");
-      }
-      if (!password) {
-        setErrPassword("Create a password");
-      } else {
-        if (password.length < 6) {
-          setErrPassword("Passwords must be at least 6 characters");
-        }
-      }
-      if (!address) {
-        setErrAddress("Enter your address");
-      }
-      if (!city) {
-        setErrCity("Enter your city name");
-      }
-      if (!country) {
-        setErrCountry("Enter the country you are residing");
-      }
-      if (!zip) {
-        setErrZip("Enter the zip code of your area");
-      }
-      // ============== Getting the value ==============
-      if (
-        clientName &&
-        email &&
-        EmailValidation(email) &&
-        password &&
-        password.length >= 6 &&
-        address &&
-        city &&
-        country &&
-        zip
-      ) {
-        setSuccessMsg(
-          `Hello dear ${clientName}, Welcome you to OREBI Admin panel. We received your Sign up request. We are processing to validate your access. Till then stay connected and additional assistance will be sent to you by your mail at ${email}`
-        );
-        setClientName("");
-        setEmail("");
-        setPhone("");
-        setPassword("");
-        setAddress("");
-        setCity("");
-        setCountry("");
-        setZip("");
-      }
+
+    let valid = true;
+    if (!clientName) {
+      setErrClientName("Enter your full name");
+      valid = false;
+    }
+    if (!email || !email.includes("@")) {
+      setErrEmail("Enter a valid email address");
+      valid = false;
+    }
+    if (!phone) {
+      setErrPhone("Enter your phone number");
+      valid = false;
+    }
+    if (!password || password.length < 6) {
+      setErrPassword("Password must be at least 6 characters");
+      valid = false;
+    }
+    if (!checked) {
+      setErrAgree("You must agree to the Terms of Service");
+      valid = false;
+    }
+
+    if (valid) {
+      loginUserStore({
+        name: clientName,
+        email: email,
+        phone: phone,
+        address: address,
+        city: city,
+        zip: zip,
+      });
+
+      setSuccessMsg(`Welcome to Orebi, ${clientName}! Account created successfully.`);
+      setTimeout(() => {
+        navigate("/shop");
+      }, 1500);
     }
   };
+
   return (
-    <div className="w-full h-screen flex items-center justify-start">
-      <div className="w-1/2 hidden lgl:inline-flex h-full text-white">
-        <div className="w-[450px] h-full bg-primeColor px-10 flex flex-col gap-6 justify-center">
-          <Link to="/">
-            <img src={logoLight} alt="logoImg" className="w-28" />
-          </Link>
-          <div className="flex flex-col gap-1 -mt-1">
-            <h1 className="font-titleFont text-xl font-medium">
-              Get started for free
-            </h1>
-            <p className="text-base">Create your account to access more</p>
-          </div>
-          <div className="w-[300px] flex items-start gap-3">
-            <span className="text-green-500 mt-1">
-              <BsCheckCircleFill />
-            </span>
-            <p className="text-base text-gray-300">
-              <span className="text-white font-semibold font-titleFont">
-                Get started fast with OREBI
-              </span>
-              <br />
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ab omnis
-              nisi dolor recusandae consectetur!
-            </p>
-          </div>
-          <div className="w-[300px] flex items-start gap-3">
-            <span className="text-green-500 mt-1">
-              <BsCheckCircleFill />
-            </span>
-            <p className="text-base text-gray-300">
-              <span className="text-white font-semibold font-titleFont">
-                Access all OREBI services
-              </span>
-              <br />
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ab omnis
-              nisi dolor recusandae consectetur!
-            </p>
-          </div>
-          <div className="w-[300px] flex items-start gap-3">
-            <span className="text-green-500 mt-1">
-              <BsCheckCircleFill />
-            </span>
-            <p className="text-base text-gray-300">
-              <span className="text-white font-semibold font-titleFont">
-                Trusted by online Shoppers
-              </span>
-              <br />
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ab omnis
-              nisi dolor recusandae consectetur!
-            </p>
-          </div>
-          <div className="flex items-center justify-between mt-10">
-            <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">
-              © OREBI
-            </p>
-            <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">
-              Terms
-            </p>
-            <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">
-              Privacy
-            </p>
-            <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">
-              Security
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="w-full lgl:w-[500px] h-full flex flex-col justify-center">
-        {successMsg ? (
-          <div className="w-[500px]">
-            <p className="w-full px-4 py-10 text-green-500 font-medium font-titleFont">
-              {successMsg}
-            </p>
-            <Link to="/signin">
-              <button
-                className="w-full h-10 bg-primeColor rounded-md text-gray-200 text-base font-titleFont font-semibold 
-            tracking-wide hover:bg-black hover:text-white duration-300"
-              >
-                Sign in
-              </button>
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50 py-10">
+      <div className="w-full max-w-5xl bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row m-4">
+        
+        {/* Left Side Showcase */}
+        <div className="w-full md:w-5/12 bg-primeColor text-white p-8 md:p-12 flex flex-col justify-between">
+          <div>
+            <Link to="/">
+              <img src={logoLight} alt="Orebi Logo" className="w-28 mb-8" />
             </Link>
-          </div>
-        ) : (
-          <form className="w-full lgl:w-[500px] h-screen flex items-center justify-center">
-            <div className="px-6 py-4 w-full h-[96%] flex flex-col justify-start overflow-y-scroll scrollbar-thin scrollbar-thumb-primeColor">
-              <h1 className="font-titleFont underline underline-offset-4 decoration-[1px] font-semibold text-2xl mdl:text-3xl mb-4">
-                Create your account
-              </h1>
-              <div className="flex flex-col gap-3">
-                {/* client name */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Full Name
-                  </p>
-                  <input
-                    onChange={handleName}
-                    value={clientName}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="eg. John Doe"
-                  />
-                  {errClientName && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errClientName}
-                    </p>
-                  )}
-                </div>
-                {/* Email */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Work Email
-                  </p>
-                  <input
-                    onChange={handleEmail}
-                    value={email}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="email"
-                    placeholder="john@workemail.com"
-                  />
-                  {errEmail && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errEmail}
-                    </p>
-                  )}
-                </div>
-                {/* Phone Number */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Phone Number
-                  </p>
-                  <input
-                    onChange={handlePhone}
-                    value={phone}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="008801234567891"
-                  />
-                  {errPhone && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errPhone}
-                    </p>
-                  )}
-                </div>
-                {/* Password */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Password
-                  </p>
-                  <input
-                    onChange={handlePassword}
-                    value={password}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="password"
-                    placeholder="Create password"
-                  />
-                  {errPassword && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errPassword}
-                    </p>
-                  )}
-                </div>
-                {/* Address */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Address
-                  </p>
-                  <input
-                    onChange={handleAddress}
-                    value={address}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="road-001, house-115, example area"
-                  />
-                  {errAddress && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errAddress}
-                    </p>
-                  )}
-                </div>
-                {/* City */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    City
-                  </p>
-                  <input
-                    onChange={handleCity}
-                    value={city}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="Your city"
-                  />
-                  {errCity && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errCity}
-                    </p>
-                  )}
-                </div>
-                {/* Country */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Country
-                  </p>
-                  <input
-                    onChange={handleCountry}
-                    value={country}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="Your country"
-                  />
-                  {errCountry && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errCountry}
-                    </p>
-                  )}
-                </div>
-                {/* Zip code */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Zip/Postal code
-                  </p>
-                  <input
-                    onChange={handleZip}
-                    value={zip}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="text"
-                    placeholder="Your country"
-                  />
-                  {errZip && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errZip}
-                    </p>
-                  )}
-                </div>
-                {/* Checkbox */}
-                <div className="flex items-start mdl:items-center gap-2">
-                  <input
-                    onChange={() => setChecked(!checked)}
-                    className="w-4 h-4 mt-1 mdl:mt-0 cursor-pointer"
-                    type="checkbox"
-                  />
-                  <p className="text-sm text-primeColor">
-                    I agree to the OREBI{" "}
-                    <span className="text-blue-500">Terms of Service </span>and{" "}
-                    <span className="text-blue-500">Privacy Policy</span>.
-                  </p>
-                </div>
-                <button
-                  onClick={handleSignUp}
-                  className={`${
-                    checked
-                      ? "bg-primeColor hover:bg-black hover:text-white cursor-pointer"
-                      : "bg-gray-500 hover:bg-gray-500 hover:text-gray-200 cursor-none"
-                  } w-full text-gray-200 text-base font-medium h-10 rounded-md hover:text-white duration-300`}
-                >
-                  Create Account
-                </button>
-                <p className="text-sm text-center font-titleFont font-medium">
-                  Don't have an Account?{" "}
-                  <Link to="/signin">
-                    <span className="hover:text-blue-600 duration-300">
-                      Sign in
-                    </span>
-                  </Link>
+            <h2 className="font-titleFont text-2xl md:text-3xl font-bold mb-3 leading-snug">
+              Create Your Free VIP Account
+            </h2>
+            <p className="text-gray-300 text-sm mb-8 leading-relaxed">
+              Join thousands of global shoppers enjoying exclusive rewards, fast shipping, and seamless checkout.
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <BsCheckCircleFill className="text-green-400 mt-1 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <strong className="text-white block font-titleFont">100% Free Lifetime Membership</strong>
+                  No hidden fees or recurring subscriptions.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <BsCheckCircleFill className="text-green-400 mt-1 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <strong className="text-white block font-titleFont">Instant $10 Welcome Voucher</strong>
+                  Applied automatically to your first purchase over $50.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <BsCheckCircleFill className="text-green-400 mt-1 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <strong className="text-white block font-titleFont">Priority Customer Support</strong>
+                  24/7 dedicated support via live chat & email.
                 </p>
               </div>
             </div>
-          </form>
-        )}
+          </div>
+
+          <div className="pt-6 border-t border-gray-700 flex items-center justify-between text-xs text-gray-400 mt-8">
+            <span>© 2026 OREBI</span>
+            <div className="flex gap-4">
+              <Link to="/about" className="hover:text-white transition-colors">Terms</Link>
+              <Link to="/contact" className="hover:text-white transition-colors">Privacy</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side Sign Up Form */}
+        <div className="w-full md:w-7/12 p-8 md:p-10 bg-white">
+          {successMsg ? (
+            <div className="text-center py-12">
+              <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                ✓
+              </div>
+              <h3 className="text-2xl font-bold font-titleFont text-primeColor mb-2">Account Created!</h3>
+              <p className="text-sm text-secondary mb-6">{successMsg}</p>
+              <Link to="/shop">
+                <button className="px-8 py-3 bg-primeColor text-white font-bold rounded-xl hover:bg-black transition-colors">
+                  Explore Shop
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSignUp} className="w-full">
+              <h1 className="font-titleFont font-bold text-2xl md:text-3xl text-primeColor mb-1">
+                Create Account
+              </h1>
+              <p className="text-xs text-secondary mb-6">
+                Fill in your details below to set up your new account.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    value={clientName}
+                    onChange={(e) => { setClientName(e.target.value); setErrClientName(""); }}
+                    placeholder="John Doe"
+                    className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                  />
+                  {errClientName && <p className="text-[11px] text-red-500 font-semibold mt-0.5">{errClientName}</p>}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setErrEmail(""); }}
+                    placeholder="john@example.com"
+                    className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                  />
+                  {errEmail && <p className="text-[11px] text-red-500 font-semibold mt-0.5">{errEmail}</p>}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => { setPhone(e.target.value); setErrPhone(""); }}
+                    placeholder="+1 (555) 000-0000"
+                    className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                  />
+                  {errPhone && <p className="text-[11px] text-red-500 font-semibold mt-0.5">{errPhone}</p>}
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => { setPassword(e.target.value); setErrPassword(""); }}
+                      placeholder="Min. 6 characters"
+                      className="w-full h-10 border border-gray-200 rounded-lg px-3 pr-10 text-sm outline-none focus:border-primeColor shadow-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-primeColor text-sm"
+                    >
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
+                  {errPassword && <p className="text-[11px] text-red-500 font-semibold mt-0.5">{errPassword}</p>}
+                </div>
+
+                {/* City */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">City</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="New York"
+                    className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                  />
+                </div>
+
+                {/* Zip */}
+                <div>
+                  <label className="block text-xs font-bold uppercase text-secondary mb-1">Zip / Postal Code</label>
+                  <input
+                    type="text"
+                    value={zip}
+                    onChange={(e) => setZip(e.target.value)}
+                    placeholder="10001"
+                    className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="mb-4">
+                <label className="block text-xs font-bold uppercase text-secondary mb-1">Street Address</label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Shopping Blvd, Suite 400"
+                  className="w-full h-10 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-primeColor shadow-xs"
+                />
+              </div>
+
+              {/* Agree Checkbox */}
+              <div className="mb-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) => { setChecked(e.target.checked); setErrAgree(""); }}
+                    className="w-4 h-4 rounded text-primeColor focus:ring-primeColor cursor-pointer"
+                  />
+                  <span className="text-xs text-secondary">
+                    I agree to the <strong className="text-primeColor">Terms of Service</strong> and <strong className="text-primeColor">Privacy Policy</strong>.
+                  </span>
+                </label>
+                {errAgree && <p className="text-[11px] text-red-500 font-semibold mt-1">{errAgree}</p>}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-11 bg-primeColor text-white font-bold font-titleFont text-sm rounded-lg hover:bg-black transition-colors shadow-md cursor-pointer mb-4"
+              >
+                Create Free Account
+              </button>
+
+              <p className="text-xs text-center text-secondary">
+                Already have an account?{" "}
+                <Link to="/signin" className="font-bold text-primeColor hover:underline">
+                  Sign In Here
+                </Link>
+              </p>
+            </form>
+          )}
+        </div>
+
       </div>
     </div>
   );

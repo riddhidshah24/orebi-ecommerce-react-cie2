@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineMenuAlt4 } from "react-icons/hi";
 import { FaSearch, FaUser, FaCaretDown, FaShoppingCart } from "react-icons/fa";
+import { MdClose, MdLogout, MdPerson } from "react-icons/md";
 import Flex from "../../designLayouts/Flex";
 import { Link, useNavigate } from "react-router-dom";
 import { useOrebiStore } from "../../../store/useOrebiStore";
@@ -9,162 +10,296 @@ import { paginationItems } from "../../../constants";
 
 const HeaderBottom = () => {
   const products = useOrebiStore((state) => state.products);
-  const [show, setShow] = useState(false);
-  const [showUser, setShowUser] = useState(false);
-  const navigate = useNavigate();
-  const ref = useRef();
-  useEffect(() => {
-    document.body.addEventListener("click", (e) => {
-      if (ref.current.contains(e.target)) {
-        setShow(true);
-      } else {
-        setShow(false);
-      }
-    });
-  }, [show, ref]);
+  const user = useOrebiStore((state) => state.user);
+  const logoutUser = useOrebiStore((state) => state.logoutUser);
 
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const navigate = useNavigate();
+  const categoryRef = useRef(null);
+  const userRef = useRef(null);
+  const searchRef = useRef(null);
 
+  // Close dropdowns on outside click
   useEffect(() => {
-    const filtered = paginationItems.filter((item) =>
-      item.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    const handleClickOutside = (e) => {
+      if (categoryRef.current && !categoryRef.current.contains(e.target)) {
+        setShowCategoryMenu(false);
+      }
+      if (userRef.current && !userRef.current.contains(e.target)) {
+        setShowUserDropdown(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter products based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredProducts([]);
+      setIsSearchOpen(false);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const matches = paginationItems.filter(
+      (item) =>
+        item.productName.toLowerCase().includes(q) ||
+        (item.cat && item.cat.toLowerCase().includes(q)) ||
+        (item.brand && item.brand.toLowerCase().includes(q)) ||
+        (item.color && item.color.toLowerCase().includes(q))
     );
-    setFilteredProducts(filtered);
+    setFilteredProducts(matches);
+    setIsSearchOpen(true);
   }, [searchQuery]);
 
-  return (
-    <div className="w-full bg-gray-100 relative">
-      <div className="max-w-container mx-auto">
-        <Flex className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full px-4 pb-4 lg:pb-0 h-full lg:h-24">
-          <div
-            onClick={() => setShow(!show)}
-            ref={ref}
-            className="flex h-14 cursor-pointer items-center gap-2 text-primeColor"
-          >
-            <HiOutlineMenuAlt4 className="w-5 h-5" />
-            <p className="text-[14px] font-normal">Shop by Category</p>
+  const handleSelectProduct = (item) => {
+    setSearchQuery("");
+    setIsSearchOpen(false);
+    navigate(`/product/${String(item.productName).toLowerCase().split(" ").join("")}`, {
+      state: { item },
+    });
+  };
 
-            {show && (
-              <motion.ul
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="absolute top-36 z-50 bg-primeColor w-auto text-secondary h-auto p-4 pb-6"
-              >
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Accessories
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Furniture
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Electronics
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Clothes
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400  hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Bags
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400  hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Home appliances
-                </li>
-              </motion.ul>
-            )}
-          </div>
-          <div className="relative w-full lg:w-[600px] h-[50px] text-base text-primeColor bg-white flex items-center gap-2 justify-between px-6 rounded-xl">
-            <input
-              className="flex-1 h-full outline-none placeholder:text-gray-400 placeholder:text-[14px]"
-              type="text"
-              onChange={handleSearch}
-              value={searchQuery}
-              placeholder="Search your products here"
-            />
-            <FaSearch className="w-5 h-5" />
-            {searchQuery && (
-              <div
-                className={`w-full mx-auto h-96 bg-white top-16 absolute left-0 z-50 overflow-y-scroll shadow-2xl scrollbar-hide cursor-pointer`}
-              >
-                {searchQuery &&
-                  filteredProducts.map((item) => (
-                    <div
-                      onClick={() =>
-                        navigate(
-                          `/product/${item.productName
-                            .toLowerCase()
-                            .split(" ")
-                            .join("")}`,
-                          {
-                            state: {
-                              item: item,
-                            },
-                          }
-                        ) & setSearchQuery("")
-                      }
-                      key={item._id}
-                      className="max-w-[600px] h-28 bg-gray-100 mb-3 flex items-center gap-3"
-                    >
-                      <img className="w-24" src={item.img} alt="productImg" />
-                      <div className="flex flex-col gap-1">
-                        <p className="font-semibold text-lg">
-                          {item.productName}
-                        </p>
-                        <p className="text-xs">{item.des}</p>
-                        <p className="text-sm">
-                          Price:{" "}
-                          <span className="text-primeColor font-semibold">
-                            ${item.price}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
+  const categories = [
+    { title: "Accessories", link: "/shop" },
+    { title: "Electronics", link: "/shop" },
+    { title: "Clothes", link: "/shop" },
+    { title: "Bags", link: "/shop" },
+    { title: "Home appliances", link: "/shop" },
+    { title: "Gadgets", link: "/shop" },
+  ];
+
+  const totalCartCount = products.reduce((acc, p) => acc + (p.quantity || 1), 0);
+
+  return (
+    <div className="w-full bg-gray-100/90 border-b border-gray-200 sticky top-20 z-40 backdrop-blur-md">
+      <div className="max-w-container mx-auto px-4">
+        <Flex className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between w-full py-3 lg:py-0 h-auto lg:h-20 gap-4 lg:gap-0">
+          
+          {/* Shop By Category Dropdown */}
+          <div ref={categoryRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+              className="flex h-12 items-center gap-2.5 px-4 bg-white border border-gray-200 rounded-xl text-primeColor font-semibold text-sm hover:bg-gray-50 transition-colors shadow-xs"
+            >
+              <HiOutlineMenuAlt4 className="w-5 h-5 text-primeColor" />
+              <span>Shop by Category</span>
+              <FaCaretDown className={`transition-transform duration-300 text-xs text-secondary ${showCategoryMenu ? "rotate-180" : ""}`} />
+            </button>
+
+            <AnimatePresence>
+              {showCategoryMenu && (
+                <motion.ul
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 10, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-14 left-0 z-50 bg-white border border-gray-200 rounded-xl w-60 text-primeColor shadow-xl py-2 overflow-hidden"
+                >
+                  {categories.map((cat, idx) => (
+                    <li key={idx}>
+                      <Link
+                        to="/shop"
+                        onClick={() => setShowCategoryMenu(false)}
+                        className="flex items-center justify-between px-5 py-2.5 text-sm text-secondary hover:text-primeColor hover:bg-gray-50 font-medium transition-colors"
+                      >
+                        {cat.title}
+                        <span className="text-xs text-gray-400">→</span>
+                      </Link>
+                    </li>
                   ))}
-              </div>
-            )}
+                </motion.ul>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="flex gap-4 mt-2 lg:mt-0 items-center pr-6 cursor-pointer relative">
-            <div onClick={() => setShowUser(!showUser)} className="flex">
-              <FaUser />
-              <FaCaretDown />
+
+          {/* Interactive Live Search Bar */}
+          <div ref={searchRef} className="relative w-full lg:w-[550px]">
+            <div className="relative w-full h-[46px] text-base text-primeColor bg-white border border-gray-200 rounded-xl flex items-center justify-between px-4 shadow-xs focus-within:border-primeColor transition-colors">
+              <FaSearch className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                className="flex-1 h-full px-3 outline-none text-sm text-primeColor placeholder:text-gray-400 placeholder:text-sm bg-transparent"
+                type="text"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+                placeholder="Search products, categories, brands..."
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setIsSearchOpen(false);
+                  }}
+                  className="p-1 text-gray-400 hover:text-primeColor text-sm rounded-full transition-colors"
+                >
+                  <MdClose />
+                </button>
+              )}
             </div>
-            {showUser && (
-              <motion.ul
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="absolute top-6 left-0 z-50 bg-primeColor w-44 text-secondary h-auto p-4 pb-6"
+
+            {/* Live Search Modal Results */}
+            <AnimatePresence>
+              {isSearchOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 5 }}
+                  className="absolute left-0 top-14 w-full bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto"
+                >
+                  {filteredProducts.length > 0 ? (
+                    <div>
+                      <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between text-xs text-secondary font-semibold">
+                        <span>Matching Results ({filteredProducts.length})</span>
+                        <span>Click to view product</span>
+                      </div>
+                      {filteredProducts.map((item) => (
+                        <div
+                          key={item._id}
+                          onClick={() => handleSelectProduct(item)}
+                          className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 flex items-center gap-4 cursor-pointer transition-colors"
+                        >
+                          <img
+                            className="w-14 h-14 object-cover rounded-md border border-gray-100 flex-shrink-0 bg-gray-50"
+                            src={item.img}
+                            alt={item.productName}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-sm text-primeColor truncate font-titleFont">
+                              {item.productName}
+                            </h4>
+                            <p className="text-xs text-secondary truncate mt-0.5">{item.des}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs font-bold text-primeColor font-titleFont">
+                                ${item.price}
+                              </span>
+                              {item.cat && (
+                                <span className="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-600">
+                                  {item.cat}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center">
+                      <p className="text-sm font-semibold text-primeColor mb-1">No products found</p>
+                      <p className="text-xs text-secondary">
+                        No results matching "{searchQuery}". Try searching for apparel, watch, or bags.
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* User Account & Cart Status Controls */}
+          <div className="flex items-center gap-6 justify-end">
+            
+            {/* User Profile / Auth State Dropdown */}
+            <div ref={userRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-primeColor font-semibold hover:text-black transition-colors rounded-lg cursor-pointer"
               >
-                <Link to="/signin">
-                  <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                    Login
-                  </li>
-                </Link>
-                <Link onClick={() => setShowUser(false)} to="/signup">
-                  <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                    Sign Up
-                  </li>
-                </Link>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Profile
-                </li>
-                <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400  hover:border-b-white hover:text-white duration-300 cursor-pointer">
-                  Others
-                </li>
-              </motion.ul>
-            )}
+                <div className="w-8 h-8 rounded-full bg-primeColor text-white flex items-center justify-center font-bold text-xs">
+                  {user ? user.name.charAt(0).toUpperCase() : <FaUser className="text-xs" />}
+                </div>
+                <span className="hidden sm:inline-block max-w-[120px] truncate">
+                  {user ? user.name : "Account"}
+                </span>
+                <FaCaretDown className={`text-xs text-secondary transition-transform duration-200 ${showUserDropdown ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {showUserDropdown && (
+                  <motion.ul
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 10, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-12 right-0 z-50 bg-white border border-gray-200 rounded-xl w-52 text-primeColor shadow-xl py-2 overflow-hidden"
+                  >
+                    {user ? (
+                      <div>
+                        <div className="px-4 py-2 border-b border-gray-100 bg-gray-50">
+                          <p className="text-xs font-bold text-primeColor truncate">{user.name}</p>
+                          <p className="text-[11px] text-secondary truncate">{user.email}</p>
+                        </div>
+                        <li>
+                          <Link
+                            to="/shop"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-secondary hover:text-primeColor hover:bg-gray-50 transition-colors"
+                          >
+                            <MdPerson className="text-base text-gray-500" /> My Account
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              logoutUser();
+                              setShowUserDropdown(false);
+                            }}
+                            className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100 font-medium"
+                          >
+                            <MdLogout className="text-base" /> Sign Out
+                          </button>
+                        </li>
+                      </div>
+                    ) : (
+                      <div>
+                        <li>
+                          <Link
+                            to="/signin"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="block px-4 py-2.5 text-sm font-semibold text-primeColor hover:bg-gray-50 transition-colors"
+                          >
+                            Sign In
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            to="/signup"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="block px-4 py-2.5 text-sm text-secondary hover:text-primeColor hover:bg-gray-50 transition-colors border-t border-gray-100"
+                          >
+                            Create Account
+                          </Link>
+                        </li>
+                      </div>
+                    )}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Shopping Cart Button */}
             <Link to="/cart">
-              <div className="relative">
-                <FaShoppingCart />
-                <span className="absolute font-titleFont top-3 -right-2 text-xs w-4 h-4 flex items-center justify-center rounded-full bg-primeColor text-white">
-                  {products.length > 0 ? products.length : 0}
+              <div className="flex items-center gap-2 bg-primeColor text-white px-4 py-2 rounded-xl hover:bg-black transition-colors duration-300 shadow-xs cursor-pointer">
+                <FaShoppingCart className="text-sm" />
+                <span className="text-xs font-bold font-titleFont">Cart</span>
+                <span className="bg-white text-primeColor text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ml-1">
+                  {totalCartCount}
                 </span>
               </div>
             </Link>
+
           </div>
         </Flex>
       </div>

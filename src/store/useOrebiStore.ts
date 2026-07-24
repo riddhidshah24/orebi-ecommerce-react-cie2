@@ -15,13 +15,22 @@ export interface ProductItem {
   [key: string]: any;
 }
 
-export interface UserInfo {
-  [key: string]: any;
+export interface UserProfile {
+  name: string;
+  email: string;
+  clientName?: string;
+  phone?: string;
+  city?: string;
+  address?: string;
+  zip?: string;
+  avatar?: string;
 }
 
 interface OrebiState {
-  userInfo: UserInfo[];
+  user: UserProfile | null;
   products: ProductItem[];
+  loginUser: (user: UserProfile) => void;
+  logoutUser: () => void;
   addToCart: (item: ProductItem) => void;
   increaseQuantity: (item: { _id: string | number }) => void;
   decreaseQuantity: (item: { _id: string | number }) => void;
@@ -32,8 +41,11 @@ interface OrebiState {
 export const useOrebiStore = create<OrebiState>()(
   persist(
     (set) => ({
-      userInfo: [],
+      user: null,
       products: [],
+
+      loginUser: (user) => set({ user }),
+      logoutUser: () => set({ user: null }),
 
       addToCart: (item) =>
         set((state) => {

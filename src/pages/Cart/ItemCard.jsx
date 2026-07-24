@@ -1,5 +1,5 @@
 import React from "react";
-import { ImCross } from "react-icons/im";
+import { FiTrash2, FiMinus, FiPlus } from "react-icons/fi";
 import { useOrebiStore } from "../../store/useOrebiStore";
 
 const ItemCard = ({ item }) => {
@@ -7,37 +7,73 @@ const ItemCard = ({ item }) => {
   const increaseQuantityStore = useOrebiStore((state) => state.increaseQuantity);
   const decreaseQuantityStore = useOrebiStore((state) => state.decreaseQuantity);
 
+  const priceNum = parseFloat(item.price) || 0;
+  const subtotal = (item.quantity * priceNum).toFixed(2);
+
   return (
-    <div className="w-full grid grid-cols-5 mb-4 border border-gray-200 py-2">
-      <div className="flex col-span-5 mdl:col-span-2 items-center gap-4 ml-4">
-        <ImCross
+    <div className="w-full bg-white border border-gray-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-xs transition-shadow duration-300">
+      
+      {/* Product Image & Title */}
+      <div className="flex items-center gap-4 w-full sm:w-2/5">
+        <button
+          type="button"
           onClick={() => deleteItemStore(item._id)}
-          className="text-primeColor hover:text-red-500 duration-300 cursor-pointer"
-        />
-        <img className="w-32 h-32" src={item.img || item.image} alt="productImage" />
-        <h1 className="font-titleFont font-semibold">{item.productName || item.name}</h1>
+          className="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+          title="Remove Item"
+        >
+          <FiTrash2 className="text-lg" />
+        </button>
+        
+        <div className="w-20 h-20 bg-gray-50 rounded-lg border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
+          <img className="w-full h-full object-cover" src={item.img || item.image} alt={item.productName || item.name} />
+        </div>
+
+        <div>
+          <h3 className="font-titleFont font-bold text-base text-primeColor line-clamp-1">
+            {item.productName || item.name}
+          </h3>
+          {item.color && (
+            <p className="text-xs text-secondary mt-0.5">Color: {item.color}</p>
+          )}
+          <p className="text-xs text-green-600 font-medium mt-1">In Stock</p>
+        </div>
       </div>
-      <div className="col-span-5 mdl:col-span-3 flex items-center justify-between py-4 mdl:py-0 px-4 mdl:px-0 gap-6 mdl:gap-0">
-        <div className="flex w-1/3 items-center text-lg font-semibold">
-          ${item.price}
+
+      {/* Price, Quantity & Subtotal Segment */}
+      <div className="flex items-center justify-between w-full sm:w-3/5 gap-4">
+        {/* Unit Price */}
+        <div className="text-sm font-semibold text-primeColor w-1/3 text-center sm:text-left">
+          ${priceNum.toFixed(2)}
         </div>
-        <div className="w-1/3 flex items-center gap-6 text-lg">
-          <span
-            onClick={() => decreaseQuantityStore({ _id: item._id })}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
-          >
-            -
-          </span>
-          <p>{item.quantity}</p>
-          <span
-            onClick={() => increaseQuantityStore({ _id: item._id })}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
-          >
-            +
-          </span>
+
+        {/* Quantity Controls */}
+        <div className="w-1/3 flex items-center justify-center">
+          <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => decreaseQuantityStore({ _id: item._id })}
+              className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 hover:text-primeColor transition-colors cursor-pointer"
+            >
+              <FiMinus className="text-xs" />
+            </button>
+            <span className="w-10 text-center font-bold text-sm text-primeColor font-titleFont">
+              {item.quantity}
+            </span>
+            <button
+              type="button"
+              onClick={() => increaseQuantityStore({ _id: item._id })}
+              className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 hover:text-primeColor transition-colors cursor-pointer"
+            >
+              <FiPlus className="text-xs" />
+            </button>
+          </div>
         </div>
-        <div className="w-1/3 flex items-center font-titleFont font-bold text-lg">
-          <p>${item.quantity * item.price}</p>
+
+        {/* Subtotal */}
+        <div className="w-1/3 text-right">
+          <span className="font-titleFont font-bold text-base text-primeColor">
+            ${subtotal}
+          </span>
         </div>
       </div>
     </div>
