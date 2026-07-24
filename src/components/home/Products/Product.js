@@ -6,11 +6,10 @@ import { MdOutlineLabelImportant } from "react-icons/md";
 import Image from "../../designLayouts/Image";
 import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/orebiSlice";
+import { useOrebiStore } from "../../../store/useOrebiStore";
 
 const Product = (props) => {
-  const dispatch = useDispatch();
+  const addToCartStore = useOrebiStore((state) => state.addToCart);
   const _id = props.productName;
   const idString = (_id) => {
     return String(_id).toLowerCase().split(" ").join("");
@@ -45,17 +44,15 @@ const Product = (props) => {
             </li>
             <li
               onClick={() =>
-                dispatch(
-                  addToCart({
-                    _id: props._id,
-                    name: props.productName,
-                    quantity: 1,
-                    image: props.img,
-                    badge: props.badge,
-                    price: props.price,
-                    colors: props.color,
-                  })
-                )
+                addToCartStore({
+                  _id: props._id,
+                  productName: props.productName,
+                  quantity: 1,
+                  img: props.img,
+                  badge: props.badge,
+                  price: props.price,
+                  color: props.color,
+                })
               }
               className="text-[#767676] hover:text-primeColor text-sm font-normal border-b-[1px] border-b-gray-200 hover:border-b-primeColor flex items-center justify-end gap-2 hover:cursor-pointer pb-1 duration-300 w-full"
             >

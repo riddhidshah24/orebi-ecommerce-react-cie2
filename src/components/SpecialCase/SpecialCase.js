@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { RiShoppingCart2Fill } from "react-icons/ri";
 import { MdSwitchAccount } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useOrebiStore } from "../../store/useOrebiStore";
 
 const SpecialCase = () => {
-  const products = useSelector((state) => state.orebiReducer.products);
+  const products = useOrebiStore((state) => state.products);
   return (
     <div className="fixed top-52 right-2 z-20 hidden md:flex flex-col gap-2">
       <Link to="/signin">
