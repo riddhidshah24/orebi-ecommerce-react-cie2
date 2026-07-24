@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaStar, FaShoppingCart, FaCheck } from "react-icons/fa";
 import { FiShield, FiTruck, FiRefreshCw } from "react-icons/fi";
 import { useOrebiStore } from "../../../store/useOrebiStore";
+import { toast } from "react-toastify";
 
 const ProductInfo = ({ productInfo }) => {
   const addToCartStore = useOrebiStore((state) => state.addToCart);
@@ -21,6 +22,7 @@ const ProductInfo = ({ productInfo }) => {
     });
 
     setAdded(true);
+    toast.success(`${productInfo.productName} added to cart!`, { icon: "🛒" });
     setTimeout(() => setAdded(false), 2000);
   };
 

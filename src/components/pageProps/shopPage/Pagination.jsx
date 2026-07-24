@@ -7,6 +7,7 @@ import { MdOutlineLabelImportant } from "react-icons/md";
 import { BsSuitHeartFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useOrebiStore } from "../../../store/useOrebiStore";
+import { toast } from "react-toastify";
 
 const Pagination = ({ items, itemsPerPage, isGridView }) => {
   const [itemOffset, setItemOffset] = useState(0);
@@ -26,6 +27,19 @@ const Pagination = ({ items, itemsPerPage, isGridView }) => {
     const newOffset = (event.selected * itemsPerPage) % items.length;
     setItemOffset(newOffset);
     window.scrollTo({ top: 300, behavior: "smooth" });
+  };
+
+  const handleAddToCart = (item) => {
+    addToCartStore({
+      _id: item._id,
+      productName: item.productName,
+      quantity: 1,
+      img: item.img,
+      badge: item.badge,
+      price: item.price,
+      color: item.color,
+    });
+    toast.success(`${item.productName} added to cart!`, { icon: "🛒" });
   };
 
   return (
@@ -135,17 +149,7 @@ const Pagination = ({ items, itemsPerPage, isGridView }) => {
                   {/* Action Buttons */}
                   <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 flex-wrap">
                     <button
-                      onClick={() =>
-                        addToCartStore({
-                          _id: item._id,
-                          productName: item.productName,
-                          quantity: 1,
-                          img: item.img,
-                          badge: item.badge,
-                          price: item.price,
-                          color: item.color,
-                        })
-                      }
+                      onClick={() => handleAddToCart(item)}
                       className="py-2 px-5 bg-primeColor text-white text-sm font-semibold rounded-lg hover:bg-black transition-colors duration-300 flex items-center gap-2 shadow-xs cursor-pointer"
                     >
                       <FaShoppingCart /> Add to Cart
@@ -165,6 +169,7 @@ const Pagination = ({ items, itemsPerPage, isGridView }) => {
                       <MdOutlineLabelImportant className="text-base" /> View Details
                     </button>
                     <button
+                      onClick={() => toast.success(`${item.productName} added to wishlist!`, { icon: "❤️" })}
                       title="Add to Wish List"
                       className="p-2.5 text-secondary hover:text-red-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                     >

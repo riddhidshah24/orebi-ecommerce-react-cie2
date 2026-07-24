@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import { useOrebiStore } from "../../store/useOrebiStore";
 import { emptyCart } from "../../assets/images/index";
 import ItemCard from "./ItemCard";
-import { FiTrash2, FiTag, FiTruck, FiShield } from "react-icons/fi";
+import { FiTrash2, FiTag, FiTruck, FiShield, FiLock, FiCheckCircle } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const products = useOrebiStore((state) => state.products);
+  const user = useOrebiStore((state) => state.user);
   const resetCartStore = useOrebiStore((state) => state.resetCart);
+  const navigate = useNavigate();
 
   const [totalAmt, setTotalAmt] = useState(0);
   const [shippingCharge, setShippingCharge] = useState(0);
@@ -44,6 +47,7 @@ const Cart = () => {
     e.preventDefault();
     const code = couponInput.trim().toUpperCase();
     if (!code) {
+      toast.warning("Please enter a valid coupon code.");
       setCouponMsg({ text: "Please enter a coupon code.", error: true });
       return;
     }
@@ -51,12 +55,31 @@ const Cart = () => {
     if (code === "OREBI20" || code === "SAVE20") {
       setDiscountPercent(20);
       setCouponMsg({ text: "Coupon OREBI20 applied! (20% Off)", error: false });
+      toast.success("Coupon OREBI20 applied! You saved 20% 🎉");
     } else if (code === "WELCOME10") {
       setDiscountPercent(10);
       setCouponMsg({ text: "Coupon WELCOME10 applied! (10% Off)", error: false });
+      toast.success("Coupon WELCOME10 applied! You saved 10% 🎉");
     } else {
       setDiscountPercent(0);
       setCouponMsg({ text: "Invalid coupon code. Try 'OREBI20' or 'WELCOME10'.", error: true });
+      toast.error("Invalid coupon code. Try 'OREBI20' or 'WELCOME10'.");
+    }
+  };
+
+  const handleResetCart = () => {
+    resetCartStore();
+    toast.info("Shopping cart cleared.", { icon: "🧹" });
+  };
+
+  const handleCheckoutClick = () => {
+    if (!user) {
+      toast.warning("Please sign in or create an account to proceed to checkout!", {
+        icon: "🔒",
+      });
+      navigate("/signin", { state: { from: "/cart" } });
+    } else {
+      navigate("/paymentgateway");
     }
   };
 
@@ -114,14 +137,14 @@ const Cart = () => {
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200">
               <Link to="/shop">
-                <button type="button" className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-primeColor hover:bg-gray-50 transition-colors">
+                <button type="button" className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-primeColor hover:bg-gray-50 transition-colors cursor-pointer">
                   ← Continue Shopping
                 </button>
               </Link>
               <button
                 type="button"
-                onClick={() => resetCartStore()}
-                className="px-6 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors flex items-center gap-2"
+                onClick={handleResetCart}
+                className="px-6 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <FiTrash2 /> Empty Cart
               </button>
@@ -133,6 +156,22 @@ const Cart = () => {
             <h2 className="text-xl font-bold font-titleFont text-primeColor mb-6 pb-3 border-b border-gray-200">
               Order Summary
             </h2>
+
+            {/* Auth Requirements Notice */}
+            {!user ? (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-6 flex items-start gap-3">
+                <FiLock className="text-amber-600 text-lg flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-900">
+                  <strong className="block font-bold mb-0.5">Sign In Required</strong>
+                  Please sign in to proceed with checkout.
+                </div>
+              </div>
+            ) : (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-6 flex items-center gap-2 text-xs text-green-800 font-semibold">
+                <FiCheckCircle className="text-green-600 text-base" />
+                <span>Signed in as <strong>{user.name}</strong></span>
+              </div>
+            )}
 
             {/* Coupon Code Section */}
             <form onSubmit={handleApplyCoupon} className="mb-6">
@@ -153,7 +192,7 @@ const Cart = () => {
                 </div>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primeColor text-white text-xs font-semibold rounded-lg hover:bg-black transition-colors"
+                  className="px-4 py-2 bg-primeColor text-white text-xs font-semibold rounded-lg hover:bg-black transition-colors cursor-pointer"
                 >
                   Apply
                 </button>
@@ -195,14 +234,24 @@ const Cart = () => {
               </span>
             </div>
 
-            <Link to="/paymentgateway">
+            {/* Checkout Button with Auth Gate */}
+            {user ? (
               <button
                 type="button"
+                onClick={handleCheckoutClick}
                 className="w-full py-3.5 bg-primeColor text-white font-bold font-titleFont text-center rounded-xl hover:bg-black transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer"
               >
                 Proceed to Checkout →
               </button>
-            </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCheckoutClick}
+                className="w-full py-3.5 bg-gray-200 text-gray-600 font-bold font-titleFont text-center rounded-xl hover:bg-primeColor hover:text-white transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <FiLock /> Sign In to Checkout
+              </button>
+            )}
 
             <div className="mt-4 flex items-center justify-center gap-2 text-xs text-secondary">
               <FiShield className="text-base text-green-600" />

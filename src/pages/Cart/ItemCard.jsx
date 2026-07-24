@@ -1,6 +1,7 @@
 import React from "react";
 import { FiTrash2, FiMinus, FiPlus } from "react-icons/fi";
 import { useOrebiStore } from "../../store/useOrebiStore";
+import { toast } from "react-toastify";
 
 const ItemCard = ({ item }) => {
   const deleteItemStore = useOrebiStore((state) => state.deleteItem);
@@ -10,6 +11,11 @@ const ItemCard = ({ item }) => {
   const priceNum = parseFloat(item.price) || 0;
   const subtotal = (item.quantity * priceNum).toFixed(2);
 
+  const handleDelete = () => {
+    deleteItemStore(item._id);
+    toast.info(`${item.productName || item.name} removed from cart.`, { icon: "🗑️" });
+  };
+
   return (
     <div className="w-full bg-white border border-gray-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-xs transition-shadow duration-300">
       
@@ -17,7 +23,7 @@ const ItemCard = ({ item }) => {
       <div className="flex items-center gap-4 w-full sm:w-2/5">
         <button
           type="button"
-          onClick={() => deleteItemStore(item._id)}
+          onClick={handleDelete}
           className="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
           title="Remove Item"
         >

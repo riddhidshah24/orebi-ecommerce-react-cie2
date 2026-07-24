@@ -7,6 +7,7 @@ import Flex from "../../designLayouts/Flex";
 import { Link, useNavigate } from "react-router-dom";
 import { useOrebiStore } from "../../../store/useOrebiStore";
 import { paginationItems } from "../../../constants";
+import { toast } from "react-toastify";
 
 const HeaderBottom = () => {
   const products = useOrebiStore((state) => state.products);
@@ -69,6 +70,12 @@ const HeaderBottom = () => {
     });
   };
 
+  const handleLogout = () => {
+    logoutUser();
+    setShowUserDropdown(false);
+    toast.info("Signed out of your account.", { icon: "👋" });
+  };
+
   const categories = [
     { title: "Accessories", link: "/shop" },
     { title: "Electronics", link: "/shop" },
@@ -90,7 +97,7 @@ const HeaderBottom = () => {
             <button
               type="button"
               onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-              className="flex h-12 items-center gap-2.5 px-4 bg-white border border-gray-200 rounded-xl text-primeColor font-semibold text-sm hover:bg-gray-50 transition-colors shadow-xs"
+              className="flex h-12 items-center gap-2.5 px-4 bg-white border border-gray-200 rounded-xl text-primeColor font-semibold text-sm hover:bg-gray-50 transition-colors shadow-xs cursor-pointer"
             >
               <HiOutlineMenuAlt4 className="w-5 h-5 text-primeColor" />
               <span>Shop by Category</span>
@@ -141,7 +148,7 @@ const HeaderBottom = () => {
                     setSearchQuery("");
                     setIsSearchOpen(false);
                   }}
-                  className="p-1 text-gray-400 hover:text-primeColor text-sm rounded-full transition-colors"
+                  className="p-1 text-gray-400 hover:text-primeColor text-sm rounded-full transition-colors cursor-pointer"
                 >
                   <MdClose />
                 </button>
@@ -252,11 +259,8 @@ const HeaderBottom = () => {
                         <li>
                           <button
                             type="button"
-                            onClick={() => {
-                              logoutUser();
-                              setShowUserDropdown(false);
-                            }}
-                            className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100 font-medium"
+                            onClick={handleLogout}
+                            className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100 font-medium cursor-pointer"
                           >
                             <MdLogout className="text-base" /> Sign Out
                           </button>
@@ -289,15 +293,21 @@ const HeaderBottom = () => {
               </AnimatePresence>
             </div>
 
-            {/* Shopping Cart Button */}
+            {/* Shopping Cart Button with Animated Bounce */}
             <Link to="/cart">
-              <div className="flex items-center gap-2 bg-primeColor text-white px-4 py-2 rounded-xl hover:bg-black transition-colors duration-300 shadow-xs cursor-pointer">
+              <motion.div
+                key={totalCartCount}
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.25, 1] }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="flex items-center gap-2 bg-primeColor text-white px-4 py-2 rounded-xl hover:bg-black transition-colors duration-300 shadow-xs cursor-pointer"
+              >
                 <FaShoppingCart className="text-sm" />
                 <span className="text-xs font-bold font-titleFont">Cart</span>
                 <span className="bg-white text-primeColor text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ml-1">
                   {totalCartCount}
                 </span>
-              </div>
+              </motion.div>
             </Link>
 
           </div>

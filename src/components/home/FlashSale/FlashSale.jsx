@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FiClock, FiZap, FiShoppingBag } from "react-icons/fi";
 import { newArrTwo } from "../../../assets/images";
 import { useOrebiStore } from "../../../store/useOrebiStore";
+import { toast } from "react-toastify";
 
 const FlashSale = () => {
   const addToCartStore = useOrebiStore((state) => state.addToCart);
@@ -36,6 +37,13 @@ const FlashSale = () => {
     badge: true,
     img: newArrTwo,
     des: "Limited-time flash offer! Save $51 on the flagship AMOLED Smart Watch.",
+  };
+
+  const handleClaimOffer = () => {
+    addToCartStore({ ...dealProduct, quantity: 1 });
+    toast.success("Flash Offer Claimed! Smart Watch Ultra Pro added to cart ⚡", {
+      icon: "⚡",
+    });
   };
 
   return (
@@ -91,7 +99,7 @@ const FlashSale = () => {
 
           <div className="flex items-center gap-3 w-full">
             <button
-              onClick={() => addToCartStore({ ...dealProduct, quantity: 1 })}
+              onClick={handleClaimOffer}
               className="flex-1 py-2.5 bg-primeColor text-white font-semibold rounded-lg hover:bg-black transition-colors duration-300 flex items-center justify-center gap-2 text-sm shadow-xs cursor-pointer"
             >
               <FiShoppingBag /> Claim Offer
