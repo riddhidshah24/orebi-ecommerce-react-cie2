@@ -27,7 +27,7 @@
   --color-background: #ffffff;
   --color-foreground: #262626;
   --color-muted: #6d6d6d;
-  --color-border: #f0f0f0;
+  --color-border: #e5e7eb;
   --color-destructive: #ea2b0f;
   --color-success: #10b981;
   --color-warning: #f59e0b;
@@ -35,6 +35,12 @@
   /* Legacy color aliases mapped to semantic tokens */
   --color-primeColor: var(--color-primary);
   --color-lightText: var(--color-muted);
+}
+
+@layer base {
+  *, ::before, ::after, ::backdrop {
+    border-color: var(--color-border, #e5e7eb);
+  }
 }
 
 @utility hoverEffect {
