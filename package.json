@@ -26,7 +26,9 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },
   "eslintConfig": {
     "extends": [
@@ -56,9 +58,12 @@
     "@types/react-dom": "^19.2.3",
     "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^6.0.4",
+    "eslint": "^10.7.0",
+    "jsdom": "^29.1.1",
     "postcss": "^8.4.20",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.1.5"
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
   }
 }
