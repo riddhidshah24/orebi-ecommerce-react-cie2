@@ -3,17 +3,22 @@ import { AiOutlineCopyright } from "react-icons/ai";
 
 const FooterBottom = () => {
   return (
-    <div className="w-full bg-gray-100 group">
-      <div className="max-w-container mx-auto border-t-[1px] pt-10 pb-20">
-        <p className="text-titleFont font-normal text-center flex md:items-center justify-center text-lightText duration-200 text-sm">
-          <span className="text-md mr-[1px] mt-[2px] md:mt-0 text-center hidden md:inline-flex">
-            <AiOutlineCopyright />
-          </span>
-          Copyright 2022 | Orebi shopping | All Rights Reserved |
-          <a href="https://reactbd.com/" target="_blank" rel="noreferrer">
-            <span className="ml-1 font-medium group-hover:text-primeColor">
-              Powered by ReactBD.com
-            </span>
+    <div className="w-full bg-black text-gray-400 py-6 border-t border-gray-900">
+      <div className="max-w-container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+        <p className="flex items-center gap-1">
+          <AiOutlineCopyright className="text-sm" />
+          <span>Copyright 2026 | <strong>Orebi Shopping</strong> | All Rights Reserved</span>
+        </p>
+
+        <p className="flex items-center gap-1 text-gray-400">
+          <span>Powered by</span>
+          <a
+            href="https://github.com/noorjsdivs"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white hover:underline font-semibold font-titleFont ml-1"
+          >
+            ReactJSBD & Noor Mohammad
           </a>
         </p>
       </div>
