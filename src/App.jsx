@@ -9,7 +9,6 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useOrebiStore } from "./store/useOrebiStore";
-
 import Footer from "./components/home/Footer/Footer";
 import FooterBottom from "./components/home/Footer/FooterBottom";
 import Header from "./components/home/Header/Header";
@@ -27,6 +26,8 @@ import Payment from "./pages/payment/Payment";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import Shop from "./pages/Shop/Shop";
 import Wishlist from "./pages/Wishlist/Wishlist";
+import ClassDemo from "./components/ClassDemo/ClassDemo";
+import ApiProducts from "./components/ApiProducts/ApiProducts";
 
 const Layout = () => {
   return (
@@ -86,6 +87,8 @@ function App() {
         pauseOnHover
         theme="dark"
       />
+      <ClassDemo />
+      <ApiProducts />
       <RouterProvider router={router} />
     </div>
   );
