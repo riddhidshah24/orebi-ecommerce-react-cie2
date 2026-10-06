@@ -29,22 +29,35 @@ export interface UserProfile {
 interface OrebiState {
   user: UserProfile | null;
   products: ProductItem[];
+  wishlist: ProductItem[];
+  darkMode: boolean;
+
   loginUser: (user: UserProfile) => void;
   logoutUser: () => void;
+
   addToCart: (item: ProductItem) => void;
   increaseQuantity: (item: { _id: string | number }) => void;
   decreaseQuantity: (item: { _id: string | number }) => void;
   deleteItem: (_id: string | number) => void;
   resetCart: () => void;
+
+    addToWishlist: (item: ProductItem) => void;
+  removeFromWishlist: (_id: string | number) => void;
+  isInWishlist: (_id: string | number) => boolean;
+
+  toggleDarkMode: () => void;
 }
 
 export const useOrebiStore = create<OrebiState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       products: [],
+      wishlist: [],
+      darkMode: false,
 
       loginUser: (user) => set({ user }),
+
       logoutUser: () => set({ user: null }),
 
       addToCart: (item) =>
@@ -52,6 +65,7 @@ export const useOrebiStore = create<OrebiState>()(
           const existingItem = state.products.find(
             (p) => String(p._id) === String(item._id)
           );
+
           if (existingItem) {
             return {
               products: state.products.map((p) =>
@@ -61,7 +75,10 @@ export const useOrebiStore = create<OrebiState>()(
               ),
             };
           }
-          return { products: [...state.products, item] };
+
+          return {
+            products: [...state.products, item],
+          };
         }),
 
       increaseQuantity: (item) =>
@@ -78,8 +95,13 @@ export const useOrebiStore = create<OrebiState>()(
           products: state.products.map((p) => {
             if (String(p._id) === String(item._id)) {
               const newQty = p.quantity > 1 ? p.quantity - 1 : 1;
-              return { ...p, quantity: newQty };
+
+              return {
+                ...p,
+                quantity: newQty,
+              };
             }
+
             return p;
           }),
         })),
@@ -92,6 +114,40 @@ export const useOrebiStore = create<OrebiState>()(
         })),
 
       resetCart: () => set({ products: [] }),
+
+       addToWishlist: (item) =>
+        set((state) => {
+          const alreadyAdded = state.wishlist.some(
+            (p) => String(p._id) === String(item._id)
+          );
+
+          if (alreadyAdded) {
+            return {
+              wishlist: state.wishlist,
+            };
+          }
+
+          return {
+            wishlist: [...state.wishlist, item],
+          };
+        }),
+
+      removeFromWishlist: (_id) =>
+        set((state) => ({
+          wishlist: state.wishlist.filter(
+            (p) => String(p._id) !== String(_id)
+          ),
+        })),
+
+      isInWishlist: (_id) => {
+        return get().wishlist.some(
+          (p) => String(p._id) === String(_id)
+        );
+      },
+            toggleDarkMode: () =>
+        set((state) => ({
+          darkMode: !state.darkMode,
+        })),
     }),
     {
       name: "orebi-storage",

@@ -76,3 +76,119 @@ nav .active li {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+/* ================= DARK MODE ================= */
+
+.dark-theme {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.dark-theme .bg-white {
+  background-color: #1f2937;
+}
+
+.dark-theme .bg-gray-50 {
+  background-color: #1f2937;
+}
+
+.dark-theme .bg-gray-100 {
+  background-color: #111827;
+}
+
+.dark-theme .text-primeColor {
+  color: #f9fafb;
+}
+
+.dark-theme .text-secondary {
+  color: #d1d5db;
+}
+
+.dark-theme .text-black {
+  color: #f9fafb;
+}
+
+.dark-theme .border-gray-200 {
+  border-color: #374151;
+}
+
+.dark-theme .border-gray-100 {
+  border-color: #374151;
+}
+/* Dark mode - header/navigation text */
+.dark-theme nav,
+.dark-theme nav a,
+.dark-theme nav li,
+.dark-theme header {
+  color: #f9fafb;
+}
+
+.dark-theme nav .active li {
+  color: #ffffff;
+}
+
+.dark-theme .text-primeColor {
+  color: #f9fafb;
+}
+/* Dark mode - navigation links */
+.dark-theme nav,
+.dark-theme nav a,
+.dark-theme nav li,
+.dark-theme nav .active,
+.dark-theme nav .active li {
+  color: #f9fafb !important;
+}
+
+.dark-theme nav a:hover,
+.dark-theme nav li:hover {
+  color: #ffffff !important;
+}
+/* Custom light-mode background */
+.light-theme {
+  background-color: #DCEBFF !important;
+  color: #262626;
+}
+/* ================= DARK MODE HEADER ================= */
+
+/* Main header + navigation bar */
+.dark-theme header,
+.dark-theme header > div,
+.dark-theme .bg-white {
+  background-color: #1f2937 !important;
+}
+
+/* Header navigation text */
+.dark-theme nav,
+.dark-theme nav a,
+.dark-theme nav li {
+  color: #e5e7eb !important;
+}
+
+/* Active navigation item */
+.dark-theme nav .active li {
+  color: #ffffff !important;
+}
+
+/* Header hover */
+.dark-theme nav a:hover,
+.dark-theme nav li:hover {
+  color: #ffffff !important;
+}
+
+/* Header bottom bar */
+.dark-theme .bg-gray-100\/90 {
+  background-color: #1f2937 !important;
+}
+
+/* Header borders */
+.dark-theme header,
+.dark-theme .border-gray-200,
+.dark-theme .border-gray-100 {
+  border-color: #374151 !important;
+}
+/* Dark mode - OREBI logo */
+.dark-theme header a,
+.dark-theme header a span,
+.dark-theme header h1,
+.dark-theme header h2 {
+  color: #f9fafb !important;
+}

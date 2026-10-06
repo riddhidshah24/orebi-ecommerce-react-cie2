@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useOrebiStore } from "./store/useOrebiStore";
 
 import Footer from "./components/home/Footer/Footer";
 import FooterBottom from "./components/home/Footer/FooterBottom";
@@ -25,6 +26,7 @@ import Offer from "./pages/Offer/Offer";
 import Payment from "./pages/payment/Payment";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import Shop from "./pages/Shop/Shop";
+import Wishlist from "./pages/Wishlist/Wishlist";
 
 const Layout = () => {
   return (
@@ -54,6 +56,7 @@ const router = createBrowserRouter(
         <Route path="/offer" element={<Offer />}></Route>
         <Route path="/product/:_id" element={<ProductDetails />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
+        <Route path="/wishlist" element={<Wishlist />}></Route>
         <Route path="/paymentgateway" element={<Payment />}></Route>
       </Route>
       <Route path="/signup" element={<SignUp />}></Route>
@@ -63,8 +66,14 @@ const router = createBrowserRouter(
 );
 
 function App() {
+  const darkMode = useOrebiStore((state) => state.darkMode);
+
   return (
-    <div className="font-bodyFont">
+    <div
+  className={`font-bodyFont min-h-screen transition-colors duration-300 ${
+    darkMode ? "dark-theme" : "light-theme"
+  }`}
+>
       <ToastContainer
         position="top-right"
         autoClose={2500}

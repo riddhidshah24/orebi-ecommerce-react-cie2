@@ -6,10 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { logo, logoLight } from "../../../assets/images";
 import Image from "../../designLayouts/Image";
 import { navBarList } from "../../../constants";
+import { useOrebiStore } from "../../../store/useOrebiStore";
 
 const Header = () => {
   const [sidenav, setSidenav] = useState(false);
   const location = useLocation();
+
+  const darkMode = useOrebiStore((state) => state.darkMode);
 
   return (
     <header className="w-full h-20 bg-white/90 sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md transition-all">
@@ -17,13 +20,18 @@ const Header = () => {
         
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <Image className="w-20 object-contain transition-transform group-hover:scale-105" imgSrc={logo} alt="Orebi Logo" />
+          <Image
+            className="w-20 object-contain transition-transform group-hover:scale-105"
+            imgSrc={darkMode ? logoLight : logo}
+            alt="Orebi Logo"
+          />
         </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1">
           {navBarList.map(({ _id, title, link }) => {
             const isActive = location.pathname === link;
+
             return (
               <NavLink
                 key={_id}
@@ -37,11 +45,16 @@ const Header = () => {
                 }
               >
                 {title}
+
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
                     className="absolute bottom-0 left-4 right-4 h-0.5 bg-primeColor rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 380,
+                      damping: 30,
+                    }}
                   />
                 )}
               </NavLink>
@@ -63,7 +76,8 @@ const Header = () => {
         <AnimatePresence>
           {sidenav && (
             <div className="fixed inset-0 z-50 flex">
-              {/* Overlay Backdroop */}
+              
+              {/* Overlay Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -77,12 +91,21 @@ const Header = () => {
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                transition={{
+                  type: "spring",
+                  damping: 25,
+                  stiffness: 200,
+                }}
                 className="relative w-4/5 max-w-sm h-full bg-primeColor text-white p-6 shadow-2xl z-10 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-700">
-                    <img className="w-28" src={logoLight} alt="Orebi Light Logo" />
+                    <img
+                      className="w-28"
+                      src={logoLight}
+                      alt="Orebi Light Logo"
+                    />
+
                     <button
                       type="button"
                       onClick={() => setSidenav(false)}
@@ -126,3 +149,4 @@ const Header = () => {
 };
 
 export default Header;
+

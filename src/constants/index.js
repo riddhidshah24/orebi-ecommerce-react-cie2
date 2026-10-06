@@ -40,6 +40,11 @@ export const navBarList = [
     title: "Journal",
     link: "/journal",
   },
+  {
+    _id: 1006,
+    title: "Wishlist ❤️",
+    link: "/wishlist",
+  },
 ];
 // =================== NavBarList End here ======================
 
